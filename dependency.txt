@@ -1,0 +1,8 @@
+transformers
+accelerate
+torch
+huggingface_hub
+rank_bm25
+typing
+os
+openai
