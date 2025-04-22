@@ -29,7 +29,7 @@ class LocalModel(BaseModel):
         # print("summerization_prompt: ", summerization_prompt)
         summarized_result = self.pipe(summerization_prompt)[0]['generated_text']
         # print("summarized_result: ", summarized_result)
-        summarized_txt = clean_string(self.pm.retrieve_llama_summarized_content(summarized_result))
+        summarized_txt = self.pm.retrieve_llama_summarized_content(summarized_result)
         # print("summarized_txt: ", summarized_txt)
         return summarized_txt
 
@@ -39,7 +39,17 @@ class LocalModel(BaseModel):
         # print("generation_prompt: ", generation_prompt)
         generation_result = self.pipe(generation_prompt)[0]['generated_text']
         # print("generation_result: ", generation_result)
-        answer = clean_string(self.pm.retrieve_llama_generation_content(generation_result))
+        answer = self.pm.retrieve_llama_generation_content(generation_result)
         # print("answer: ", answer)
         return answer
+
+    def get_question_type(self, txt: str) -> str:
+        print("[Local Model] Classifying question type...")
+        classify_type_prompt = self.pm.generate_llama_classify_question_type(txt)
+        # print("classify_type_prompt: ", classify_type_prompt)
+        classify_type_result = self.pipe(classify_type_prompt)[0]['generated_text']
+        # print("classify_type_result: ", classify_type_result)
+        result_type = self.pm.retrieve_llama_generation_content(classify_type_result)
+        # print("result_type: ", result_type)
+        return result_type
 
