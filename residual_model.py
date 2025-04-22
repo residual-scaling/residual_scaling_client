@@ -5,11 +5,22 @@ from rsdb_connector import RSDBConnector
 from config import server_setting
 
 
+def load_connectors():
+    connectors = {}
+    assert len(server_setting["host"]) == len(server_setting["port"]) == len(server_setting["field"]), "ERROR: server_setting length mismatch!"
+    for i in range(len(server_setting["host"])):
+        connectors[server_setting["field"][i]] = RSDBConnector(server_setting["host"][i], server_setting["port"][i])
+        connectors.append(connectors)
+    return connectors
+
+
+
 class ResidualModel:
     def __init__(self, model, model_type: str = "local", db_type: str = "vector"):
         self.model_type = model_type
         self.model = load_model(model_type, model)
-        self.connector = RSDBConnector(server_setting["host"], server_setting["port"])
+        self.server_fields = server_setting["field"]
+        self.connectors = load_connectors()
         self.distillation_queue = []
         self.queue_lock = threading.Lock()
         
