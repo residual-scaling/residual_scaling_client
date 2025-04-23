@@ -3,6 +3,7 @@ import time
 from model.model_loader import load_model
 from rsdb_connector import RSDBConnector
 from config import server_setting
+from util import log_flush
 
 
 def load_connectors():
@@ -27,37 +28,37 @@ class ResidualModel:
     
     def process_distillation_queue(self):
         log_file = open('./log/distill_log.txt', 'a')
-        log_file.write("[Distill] Start distillation thread\n")
+        log_flush(log_file, "[Distill] Start distillation thread\n")
         print("[Distill] Start distillation thread")
         log_file.flush()
 
         while True:
             time.sleep(3)
-            log_file.write("[Distill] check distillation queue\n")
-            print("[Distill] check distillation queue")
+            log_flush(log_file, "[Distill] check distillation queue\n")
+            # print("[Distill] check distillation queue")
             while len(self.distillation_queue) > 0:
                 with self.queue_lock:
                     q_field, cur_context = self.distillation_queue.pop(0)
-                    log_file.write(f"[Distill] distilling 1 out of {len(self.distillation_queue) + 1}\n")
+                    log_flush(log_file, f"[Distill] distilling 1 out of {len(self.distillation_queue) + 1}\n")
                     print(f"[Distill] distilling 1 out of {len(self.distillation_queue) + 1}")
                 distilled_context = self.model.generate_distillation(cur_context)
                 # sleep 0.1s to give user query processing the priority, creating a pseudo priority lock
                 time.sleep(0.1)
                 self.connectors[q_field].put(distilled_context)
-            log_file.write("[Distill] distillation queue clean!\n")
-            print("[Distill] distillation queue clean!")
+            log_flush(log_file, "[Distill] distillation queue clean!\n")
+            # print("[Distill] distillation queue clean!")
             # write to disk, force the result to appear immidiately in the file
             log_file.flush()
 
     def query_without_residual(self, query: str) -> str:
         print("### Start query_without_residual ### ")
-        result = self.model.generate_answer(query)
+        result = self.model.generate_answer(query, [])
         print("### Finish query_without_residual ### ")
         return result
 
     def query_with_residual(self, query: str, question_type: str) -> str:
         print("### Start query_with_residual() ### ")
-        related_contexts = self.connector[question_type].get(query)
+        related_contexts = self.connectors[question_type].get(query)
         with self.queue_lock:
             print(f"--- related_contexts len: {len(related_contexts)}---", )
             context = ",".join(related_contexts)

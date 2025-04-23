@@ -1,5 +1,5 @@
 from config import prompt_hyperparameter, server_setting
-from util import cuta_last_appearance
+from util import cuta_last_appearance, clean_string
 
 
 class PromptManager:

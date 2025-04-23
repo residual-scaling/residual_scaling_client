@@ -18,3 +18,12 @@ def cuta_last_appearance(txt: str, keyword: str) -> str:
     result_start += len(keyword)
     result = txt[result_start:].strip()
     return result
+
+
+def log_flush(fileIO, txt: str):
+    """
+    Write and flush to the disk.
+    """
+    fileIO.write(txt)
+    fileIO.write("\n")
+    fileIO.flush()
