@@ -9,3 +9,6 @@ server_setting = {
     "port": [4001, 4002, 4003],
     "field": ["geography", "biology", "economy"],
 }
+experience_constructor_hyperparameter = {
+    "max_round": 3
+}

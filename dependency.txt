@@ -4,3 +4,6 @@ torch
 huggingface_hub
 rank_bm25
 openai
+pandas
+pyarrow
+fastparquet
