@@ -12,8 +12,8 @@ class TeacherModel:
         """
         TeacherModel class to handle the loading of the model and the connectors for the residual scaling database.
         """
-        self.model_type = model_type
-        self.model = load_model(model_type, model_path)
+        # self.model_type = model_type
+        # self.model = load_model(model_type, model_path)
         
         # logger setting
         self.fileIO = open('./log/distill_log.txt', 'a')
@@ -22,31 +22,31 @@ class TeacherModel:
 
         # question setting
         self.question = None
-        self.resoning_process = None
-        self.answer = None
+        self.reasoning = None
+        self.truth = None
         self.options = []
         self.conversation = ""
         self.try_count = 0
 
-    def load_question(self, question: str, reasoning_process: str = None, answer: str = None, options: list = []):
+    def load_question(self, question_data: dict):
         """
         Load the question into the model.
         """
+        self.question = question_data["question"]
+        self.reasoning = question_data["reasoning"]
+        self.truth = question_data["truth"]
+        self.options = question_data["options"]
         log_flush(self.fileIO, "+++++++++++++++++++++++++++++++")
-        log_flush(self.fileIO, "Question loaded: " + question)
-        log_flush(self.fileIO, "Reasoning process loaded: " + str(reasoning_process))
-        log_flush(self.fileIO, "Answer loaded: " + str(answer))
-        log_flush(self.fileIO, "Options loaded: " + str(options))
-        self.question = question
-        self.resoning_process = reasoning_process
-        self.answer = answer
-        self.options = options
+        log_flush(self.fileIO, "Question loaded: " + self.question)
+        log_flush(self.fileIO, "Reasoning loaded: " + self.reasoning)
+        log_flush(self.fileIO, "Truth loaded: " + self.truth)
+        log_flush(self.fileIO, "Options loaded: " + str(self.options))
         self.try_count = 0
         log_flush(self.fileIO, "Conversation cleared and reloated.")
         self.conversation = ""
-        self.conversation += f"Question: '{question}', "
+        self.conversation += f"Question: '{self.question}', "
         if len(self.options) > 0:
-            self.conversation += f"Options:  '{str(self.options)}', "
+            self.conversation += f"Options: {str(self.options)}, "
 
     def exam_result(self, result: str) -> bool:
         """
