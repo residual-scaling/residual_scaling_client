@@ -1,5 +1,5 @@
 from config import prompt_hyperparameter, server_setting
-from util import cuta_last_appearance, clean_string
+from util import cut_last_appearance, clean_string
 
 
 class PromptManager:
@@ -19,7 +19,7 @@ class PromptManager:
 
     def retrieve_llama_summarized_content(self, txt: str) -> str:
         keyword = "Summary:"
-        return clean_string(cuta_last_appearance(txt, keyword))
+        return clean_string(cut_last_appearance(txt, keyword))
 
     def generate_llama_generation_prompt(self, query: str, context: list) -> str:
         if len(context) == 0:
@@ -42,7 +42,7 @@ class PromptManager:
     
     def retrieve_llama_generation_content(self, txt: str) -> str:
         keyword = "<|end_header_id|>"
-        return clean_string(cuta_last_appearance(txt, keyword))
+        return clean_string(cut_last_appearance(txt, keyword))
 
     def generate_llama_classify_question_type(self, txt: str) -> str:
         fields = ", ".join(f'"{item}"' for item in  self.fields)
@@ -55,7 +55,7 @@ class PromptManager:
 
     def retrieve_llama_classify_question_type(self, txt: str) -> str:
         keyword = "<|start_header_id|>assistant<|end_header_id|>"
-        result_type = clean_string(cuta_last_appearance(txt, keyword))
+        result_type = clean_string(cut_last_appearance(txt, keyword))
         if result_type not in [self.fields, "others"]:
             raise ValueError(f"ERROR: in retrieve_llama_classify_question_type() Invalid type: {result_type}. Expected one of {self.fields} or 'others'.")
         return result_type
