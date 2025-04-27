@@ -8,15 +8,15 @@ import datetime
 
 
 class TeacherModel:
-    def __init__(self, model_path, model_type: str = "local"):
+    def __init__(self):
         """
-        TeacherModel class to handle the loading of the model and the connectors for the residual scaling database.
+        Teacher model save question to ask and save the conversation(experience).
         """
         # self.model_type = model_type
         # self.model = load_model(model_type, model_path)
         
         # logger setting
-        self.fileIO = open('./log/distill_log.txt', 'a')
+        self.fileIO = open('./log/teacher_log.txt', 'a')
         log_flush(self.fileIO, "===============================")
         log_flush(self.fileIO, "Start teacher model on " + str(datetime.datetime.now()))
 
@@ -27,6 +27,9 @@ class TeacherModel:
         self.options = []
         self.conversation = ""
         self.try_count = 0
+
+        # rsdb setting
+        self.rsdb
 
     def load_question(self, question_data: dict):
         """
@@ -42,24 +45,42 @@ class TeacherModel:
         log_flush(self.fileIO, "Truth loaded: " + self.truth)
         log_flush(self.fileIO, "Options loaded: " + str(self.options))
         self.try_count = 0
-        log_flush(self.fileIO, "Conversation cleared and reloated.")
+        log_flush(self.fileIO, "Conversation cleared and reloaded.")
         self.conversation = ""
-        self.conversation += f"Question: '{self.question}', "
-        if len(self.options) > 0:
-            self.conversation += f"Options: {str(self.options)}, "
 
-    def exam_result(self, result: str) -> bool:
+    def exam_result(self, answer: str) -> bool:
         """
-        Save the exam result to the conversation.
+        Save the exam answer to the conversation.
         """
-        log_flush(self.fileIO, "Exam result loaded: " + result)
-        self.conversation += f"Result: '{result}', "
+        self.try_count += 1
+        if answer == self.truth:
+            log_flush(self.fileIO, f"Answer ({answer}) is correct.")
+            self.conversation += f" The result of the previous attempt is: '{answer}', and it is the CORRECT answer! "
+            return True
+        else:
+            log_flush(self.fileIO, f"Truth is ({self.truth}), Answer is ({answer}), answer is wrong.")
+            self.conversation += f" The result of the previous attempt is: '{answer}', and it is a WRONG answer! "
+        return False
+
         
     def get_full_conversation(self):
         """
         Get the full conversation.
         """
-        return self.conversation
+        full_conversation = f"Question: '{self.question}', "
+        if len(self.options) > 0:
+            full_conversation += f"Options of answers: {str(self.options)}, "
+        return full_conversation + self.conversation
+    
+    def get_new_question_state(self):
+        """
+        Get the new question state.
+        """
+        return {
+            "question": self.question,
+            "options": self.options,
+            "conversation": self.conversation
+        }
 
         
 

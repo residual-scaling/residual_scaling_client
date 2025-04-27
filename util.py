@@ -5,8 +5,7 @@ def clean_string(input_string):
     """
     Cleans the input string by removing \n and *.
     """
-    return re.sub(r'[\n|*]', '', input_string)
-
+    return re.sub(r'[\n|*|\'|\"]', '', input_string.strip()).strip()
 
 def cut_last_appearance(txt: str, keyword: str) -> str:
     """

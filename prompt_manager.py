@@ -84,5 +84,5 @@ class PromptManager:
         return prompt
     
     def retrieve_llama_percise_answer(self, txt: str) -> str:
-        keyword = "#### "
+        keyword = "####"
         return clean_string(cut_last_appearance(txt, keyword)).strip()
