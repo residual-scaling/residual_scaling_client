@@ -38,3 +38,7 @@ def log_flush(fileIO, txt: str):
     fileIO.write(txt)
     fileIO.write("\n")
     fileIO.flush()
+
+
+def get_generated_text(generation_result) -> str:
+    return generation_result[0]['generated_text']

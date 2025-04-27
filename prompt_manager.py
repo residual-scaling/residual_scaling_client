@@ -59,3 +59,30 @@ class PromptManager:
         if result_type not in [self.fields, "others"]:
             raise ValueError(f"ERROR: in retrieve_llama_classify_question_type() Invalid type: {result_type}. Expected one of {self.fields} or 'others'.")
         return result_type
+
+    def generate_llama_percise_question_prompt(self, query: str, options: list = [], context: list = []) -> str:
+        # create appropriate header
+        header = "You are a helpful AI assistant. The final answer should be as short and percise as possible."
+        if len(options) > 0:
+            header += " Choose the answer from the options."
+        if len(context) > 0:
+            header += " Always use the provided context to answer."
+        header += " Answer the final answer in the end after #### "
+
+        prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+                {header}<|eot_id|>
+                <|start_header_id|>user<|end_header_id|>\n"""
+        
+        # cosntruct the prompt
+        if len(options) > 0:
+            prompt += f"Options: '{str(options)}'\n"
+        if len(context) > 0:
+            concated_context = ",".join(context)
+            prompt += f"Context: '{concated_context}'\n"
+        prompt += f"""Request: {query}<|eot_id|>
+                <|start_header_id|>assistant<|end_header_id|>"""
+        return prompt
+    
+    def retrieve_llama_percise_answer(self, txt: str) -> str:
+        keyword = "#### "
+        return clean_string(cut_last_appearance(txt, keyword)).strip()
