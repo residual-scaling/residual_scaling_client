@@ -9,7 +9,7 @@ server_setting = {
     "port": [4001, 4002, 4003],
     "field": ["math", "science", "english"],
 }
-experience_constructor_hyperparameter = {
+experience_constructor_meta = {
     "max_round": 3
 }
 model_path = {

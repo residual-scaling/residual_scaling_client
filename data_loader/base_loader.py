@@ -45,3 +45,18 @@ class BaseLoader:
         train_set = self.data[:num_train_samples]
         test_set = self.data[num_train_samples:]
         return train_set, test_set
+    
+    def load_n_from_front(self, n: int):
+        if n > self.size:
+            raise ValueError("n is larger than the size of the data.")
+        if n < 0:
+            raise ValueError("n must be a positive integer.")
+        return self.data[:n]
+    
+    def load_n_from_back(self, n: int):
+        if n > self.size:
+            raise ValueError("n is larger than the size of the data.")
+        if n < 0:
+            raise ValueError("n must be a positive integer.")
+        return self.data[-n:]
+    

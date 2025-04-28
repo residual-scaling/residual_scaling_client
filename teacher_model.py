@@ -8,17 +8,24 @@ import datetime
 
 
 class TeacherModel:
-    def __init__(self):
+    def __init__(self, subject: str, model_type: str = "local", model_path: str = None):
         """
         Teacher model save question to ask and save the conversation(experience).
         """
-        # self.model_type = model_type
-        # self.model = load_model(model_type, model_path)
+        self.model_type = model_type
+        self.model = load_model(model_type, model_path)
         
         # logger setting
         self.fileIO = open('./log/teacher_log.txt', 'a')
         log_flush(self.fileIO, "===============================")
         log_flush(self.fileIO, "Start teacher model on " + str(datetime.datetime.now()))
+
+        # set subject and connect to the server of the subject
+        if subject not in server_setting["field"]:
+            raise ValueError(f"ERROR: In TeacherModel.__init__(), {subject} is not in the server setting!")
+        self.subject = subject
+        field_ind = server_setting["field"].index(subject)
+        self.connector = RSDBConnector(server_setting["host"][field_ind], server_setting["port"][field_ind])
 
         # question setting
         self.question = None
@@ -72,6 +79,10 @@ class TeacherModel:
             full_conversation += f"Options of answers: {str(self.options)}, "
         return full_conversation + self.conversation
     
+    def get_distilled_conversation(self):
+        full_conversation = self.get_full_conversation()
+        return self.model.generate_distillation(full_conversation)
+    
     def get_new_question_state(self):
         """
         Get the new question state.
@@ -81,6 +92,19 @@ class TeacherModel:
             "options": self.options,
             "conversation": self.conversation
         }
+    
+    def save_conversation(self, save_distilled: bool = True):
+        """
+        Save the conversation to the database.
+        """
+        to_save_conversation = self.get_full_conversation()
+        if save_distilled:
+            to_save_conversation = self.get_distilled_conversation()
+        log_flush(self.fileIO, "Conversation to save: " + to_save_conversation)
+        self.connector.put(self.subject, to_save_conversation)
+
+    def save_experience_db(self):
+        self.connector
 
         
 

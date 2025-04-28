@@ -31,4 +31,10 @@ class RSDBConnector:
             if data[-1] == '':
                 data = data[:-1]
         return data
+    
+    def save_db(self):
+        with self.socket_lock:
+            # send to server
+            self.client_socket.sendall(RSMetaMsg(RSMetaType.CLIENT_SAVE).serialize())
+            # TODO: check the return value
         
