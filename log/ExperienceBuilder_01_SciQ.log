@@ -1,0 +1,6 @@
+===============================
+Initialize Experience Builder id(01) on dataset(SciQ) 2025-04-28 15:57:21.930251
+Start Experience Building ont train set with size(1367) ...
+Student model answer is WRONG: protozoa on trye 1, try again.
+Student model answer is WRONG: [viruses] on trye 2, try again.
+Student model answer is CORRECT: mesophilic organisms on try 3.

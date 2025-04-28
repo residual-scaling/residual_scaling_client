@@ -1,4 +1,5 @@
-from util import log_flush, get_dataloader
+from util import log_flush
+from data_loader.loader_util import get_dataloader
 from teacher_model import TeacherModel
 from student_model import StudentModel
 from config import experience_constructor_meta
@@ -6,7 +7,7 @@ import datetime
 
 
 class ExperienceBuilder:
-    def __init__(self, id: str, subject: str, dataset: str, train_percent: float, model_type, model_path: str, save_distill_experience: bool = True, save_false_experience: bool = False):
+    def __init__(self, id: str, subject: str, dataset: str, train_percent: float, model_type: str, model_path: str, save_distill_experience: bool = True, save_false_experience: bool = False):
         self.id = id
         self.dataset = dataset
         self.max_round = experience_constructor_meta["max_round"]
@@ -20,7 +21,7 @@ class ExperienceBuilder:
         self.train_set, self.test_set = self.dataloader.load_train_test_set(train_percent, random_shuffle=False)
 
         # set up teacher and student model
-        self.teacher_model = TeacherModel(subject=dataset, model_type=model_type, model_path=model_path)
+        self.teacher_model = TeacherModel(subject=subject, model_type=model_type, model_path=model_path)
         self.student_model = StudentModel(model_type=model_type, model_path=model_path)
 
         # logger setting
@@ -33,10 +34,13 @@ class ExperienceBuilder:
         log_flush(self.fileIO, f"Start Experience Building ont train set with size({train_size}) ...")
         # loop though the train set
         for i in range(train_size):
+            log_flush(self.fileIO, f"+++ on train datapoint {i + 1}/{train_size} ...")
+            print(f"+++ on train datapoint {i + 1}/{train_size} ...")
             self.teacher_model.load_question(self.train_set[i])
             # get correct answer with max try
             is_correct_answer = False
             for j in range(self.max_round):
+                log_flush(self.fileIO, f"try {j + 1}/{self.max_round} ...")
                 question_state = self.teacher_model.get_new_question_state()
                 student_answer = self.student_model.solve_question(question_state)
                 is_correct_answer = self.teacher_model.exam_result(student_answer)

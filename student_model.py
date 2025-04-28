@@ -37,7 +37,7 @@ class StudentModel:
         log_flush(self.fileIO, "Prompt: " + prompt)
         # generate result
         result = self.model.clean_pipe(prompt)
-        print("result: ", result)
+        # print("result: ", result)
         answer = self.pm.retrieve_llama_percise_answer(result)
         log_flush(self.fileIO, "Answer: " + answer)
         return answer

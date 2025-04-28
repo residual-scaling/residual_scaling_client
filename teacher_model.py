@@ -35,9 +35,6 @@ class TeacherModel:
         self.conversation = ""
         self.try_count = 0
 
-        # rsdb setting
-        self.rsdb
-
     def load_question(self, question_data: dict):
         """
         Load the question into the model.
@@ -104,7 +101,7 @@ class TeacherModel:
         self.connector.put(self.subject, to_save_conversation)
 
     def save_experience_db(self):
-        self.connector
-
-        
-
+        """
+        Tell the server to save backup database.
+        """
+        self.connector.save_db()
