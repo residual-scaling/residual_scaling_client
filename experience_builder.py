@@ -41,7 +41,7 @@ class ExperienceBuilder:
             is_correct_answer = False
             for j in range(self.max_round):
                 log_flush(self.fileIO, f"try {j + 1}/{self.max_round} ...")
-                question_state = self.teacher_model.get_new_question_state()
+                question_state = self.teacher_model.get_conversation_question_state()
                 student_answer = self.student_model.solve_question(question_state)
                 is_correct_answer = self.teacher_model.exam_result(student_answer)
                 if is_correct_answer:
@@ -53,9 +53,7 @@ class ExperienceBuilder:
                 log_flush(self.fileIO, f"Do not save wrong answer experience.")
                 continue
             # save the experience
-            self.teacher_model.save_conversation()
+            self.teacher_model.save_conversation(self.savedistill_experience)
 
     def save_experience_db(self):
         self.teacher_model.save_experience_db()
-            
-

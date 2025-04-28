@@ -21,19 +21,38 @@ class StudentModel:
         log_flush(self.fileIO, "Start teacher model on " + str(datetime.datetime.now()))
 
     def solve_question(self, question_data) -> str:
+        """
+        Solve question with input conversation from the teacher model.
+        """
         # gather question data
         question = question_data["question"]
         options = question_data["options"]
-        conversation = question_data["conversation"]
+        context = question_data["context"]
         log_flush(self.fileIO, "+++++++++++++++++++++++++++++++")
-        log_flush(self.fileIO, f"Solve question: {question}, with options: {options} and previous conversation: '{conversation}'")
-        if conversation is not None and len(conversation) != 0:
-            context = [conversation]
+        log_flush(self.fileIO, f"Solve question: {question}, with options: {options} and previous conversation/conetxt: '{context}'")
+        if context is not None and len(context) != 0:
+            context = [context]
         else:
             context = []
 
         # get prompt
         prompt = self.pm.generate_llama_percise_question_prompt(question, options, context)
+        log_flush(self.fileIO, "Prompt: " + prompt)
+        # generate result
+        result = self.model.clean_pipe(prompt)
+        # print("result: ", result)
+        answer = self.pm.retrieve_llama_percise_answer(result)
+        log_flush(self.fileIO, "Answer: " + answer)
+        return answer
+    
+    def get_percise_answer_basic(self, question: str, options: list) -> str:
+        """
+        Get precise answer with input conversation from the teacher model.
+        """
+        log_flush(self.fileIO, "+++++++++++++++++++++++++++++++")
+        log_flush(self.fileIO, f"Get percise answer WITHOUT residual, question: {question}, with options: {options}")
+        # get prompt
+        prompt = self.pm.generate_llama_percise_question_prompt(question, options, [])
         log_flush(self.fileIO, "Prompt: " + prompt)
         # generate result
         result = self.model.clean_pipe(prompt)

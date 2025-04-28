@@ -80,15 +80,18 @@ class TeacherModel:
         full_conversation = self.get_full_conversation()
         return self.model.generate_distillation(full_conversation)
     
-    def get_new_question_state(self):
+    def get_conversation_question_state(self):
         """
         Get the new question state.
         """
         return {
             "question": self.question,
             "options": self.options,
-            "conversation": self.conversation
+            "context": self.conversation
         }
+    
+    def get_question(self) -> str:
+
     
     def save_conversation(self, save_distilled: bool = True):
         """
@@ -98,10 +101,19 @@ class TeacherModel:
         if save_distilled:
             to_save_conversation = self.get_distilled_conversation()
         log_flush(self.fileIO, "Conversation to save: " + to_save_conversation)
-        self.connector.put(self.subject, to_save_conversation)
+        self.connector.put(to_save_conversation)
 
     def save_experience_db(self):
         """
         Tell the server to save backup database.
         """
         self.connector.save_db()
+
+    def get_question_related_contexts(self) -> list:
+        """
+        Get the question related contexts from the database.
+        """
+        log_flush(self.fileIO, "Get question related contexts from the database.")
+        related_contexts = self.connector.get(self.question)
+        log_flush(self.fileIO, f"Related contexts: {str(related_contexts)}")
+        return related_contexts
