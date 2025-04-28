@@ -89,9 +89,23 @@ class TeacherModel:
             "options": self.options,
             "context": self.conversation
         }
-    
-    def get_question(self) -> str:
 
+    def get_plain_question_state(self):
+        """
+        Get the plain question state.
+        """
+        return {
+            "question": self.question,
+            "options": self.options,
+            "context": []
+        }
+    
+    def get_experience_question_state(self) :
+        return {
+            "question": self.question,
+            "options": self.options,
+            "context": self.get_question_related_contexts(),
+        }
     
     def save_conversation(self, save_distilled: bool = True):
         """

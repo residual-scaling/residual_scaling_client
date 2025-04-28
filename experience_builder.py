@@ -11,8 +11,8 @@ class ExperienceBuilder:
         self.id = id
         self.dataset = dataset
         self.max_round = experience_constructor_meta["max_round"]
-        self.savedistill_experience = save_distill_experience
-        self.savefalse_experience = save_false_experience
+        self.save_distill_experience = save_distill_experience
+        self.save_false_experience = save_false_experience
         self.train_percent = train_percent
 
         # set dataloader
@@ -49,11 +49,11 @@ class ExperienceBuilder:
                     break
                 else:
                     log_flush(self.fileIO, f"Student model answer is WRONG: {student_answer} on trye {j + 1}, try again.")
-            if not is_correct_answer and not self.savefalse_experience:
+            if not is_correct_answer and not self.save_false_experience:
                 log_flush(self.fileIO, f"Do not save wrong answer experience.")
                 continue
             # save the experience
-            self.teacher_model.save_conversation(self.savedistill_experience)
+            self.teacher_model.save_conversation(self.save_distill_experience)
 
     def save_experience_db(self):
         self.teacher_model.save_experience_db()
