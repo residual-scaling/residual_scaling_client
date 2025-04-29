@@ -7,7 +7,7 @@ model_hyperparameter = {
 server_setting = {
     "host": ["127.0.0.1", "127.0.0.1", "127.0.0.1"],
     "port": [4001, 4002, 4003],
-    "field": ["math", "science", "english"],
+    "field": ["math", "science", "biology"],
 }
 experience_constructor_meta = {
     "max_round": 3
@@ -17,7 +17,8 @@ model_path = {
 }
 data_path = {
     "gsm8k": "/root/autodl-tmp/grade-school-math/grade_school_math/data/",
-    "sciq": "/root/autodl-tmp/sciq/data/"
+    "sciq": "/root/autodl-tmp/sciq/data/",
+    "mmlu": "/root/autodl-tmp/mmlu/",
     # "aqua": "/root/autodl-tmp/aqua.json",
     # "strategyqa": "/root/autodl-tmp/strategyqa.json",
     # "svamp": "/root/autodl-tmp/svamp.json",
