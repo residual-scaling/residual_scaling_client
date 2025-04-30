@@ -5,7 +5,7 @@ from prompt_manager import PromptManager
 
 
 class StudentModel:
-    def __init__(self, model_path: str, model_type: str = "local"):
+    def __init__(self, model_type: str, model_path: str):
         """
         Student model solve question, clean and return the data, that's it.
         """

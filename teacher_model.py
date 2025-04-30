@@ -87,7 +87,7 @@ class TeacherModel:
         return {
             "question": self.question,
             "options": self.options,
-            "context": self.conversation
+            "context": [self.conversation]
         }
 
     def get_plain_question_state(self):
