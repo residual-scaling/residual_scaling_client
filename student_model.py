@@ -29,7 +29,7 @@ class StudentModel:
         options = question_data["options"]
         context = question_data["context"]
         log_flush(self.fileIO, "+++++++++++++++++++++++++++++++")
-        log_flush(self.fileIO, f"Solve question: {question}, with options: {options} and previous conversation/conetxt: '{context}'")
+        log_flush(self.fileIO, f"Solve question: {question}, with options: {options} and previous conetxt: '{context}'")
 
         # get prompt
         prompt = self.pm.generate_llama_percise_question_prompt(question, options, context)
