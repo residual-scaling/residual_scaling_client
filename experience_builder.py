@@ -35,6 +35,7 @@ class ExperienceBuilder:
         # loop though the train set
         for i in range(train_size):
             log_flush(self.fileIO, f"+++ on train datapoint {i + 1}/{train_size} ...")
+            log_flush(self.fileIO, f"question: ({self.train_set[i]["question"]}), truth: ({self.train_set[i]["truth"]}), options: ({self.train_set[i]["options"]})")
             print(f"+++ on train datapoint {i + 1}/{train_size} ...")
             self.teacher_model.load_question(self.train_set[i])
             # get correct answer with max try

@@ -112,7 +112,9 @@ class TeacherModel:
         Save the conversation to the database.
         """
         to_save_conversation = self.get_full_conversation()
+        log_flush(self.fileIO, f"Full conversation: (){to_save_conversation}")
         if save_distilled:
+            log_flush(self.fileIO, "Distilling")
             to_save_conversation = self.get_distilled_conversation()
         log_flush(self.fileIO, "Conversation to save: " + to_save_conversation)
         self.connector.put(to_save_conversation)
@@ -127,7 +129,6 @@ class TeacherModel:
         """
         Get the question related contexts from the database.
         """
-        log_flush(self.fileIO, "Get question related contexts from the database.")
         related_contexts = self.connector.get(self.question)
-        log_flush(self.fileIO, f"Related contexts: {str(related_contexts)}")
+        log_flush(self.fileIO, f"Retrieve from VectorDB, original question: ({self.question}), Related contexts: ({str(related_contexts)})")
         return related_contexts
