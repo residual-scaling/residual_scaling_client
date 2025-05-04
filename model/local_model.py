@@ -37,7 +37,7 @@ class LocalModel(BaseModel):
         # print("summarized_txt: ", summarized_txt)
         return summarized_txt
 
-    def generate_answer(self, txt: str, context: list) -> str:
+    def generate_answer(self, txt: str, context: str) -> str:
         print("[Local Model] Generating answer...")
         generation_prompt = self.pm.generate_llama_generation_prompt(txt, context)
         # print("generation_prompt: ", generation_prompt)
