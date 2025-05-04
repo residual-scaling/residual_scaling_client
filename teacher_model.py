@@ -83,7 +83,6 @@ class TeacherModel:
             log_flush(self.fileIO, f"Truth is ({self.truth}), Answer is ({answer}), answer is wrong.")
             # self.conversation += f" The result of the previous attempt is: '{answer}', and it is a WRONG answer! "
         return False
-
         
     def get_full_conversation(self):
         """
