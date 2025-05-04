@@ -36,6 +36,20 @@ class LocalModel(BaseModel):
         summarized_txt = self.pm.retrieve_llama_summarized_content(summarized_result)
         # print("summarized_txt: ", summarized_txt)
         return summarized_txt
+    
+    def generate_MC_distillation(self, question: str, correct_answers: list, wrong_answers: list) -> str:
+        """
+        Get the distillation of the multiple choice question.
+        """
+        print("[Local Model] Multiple choice distilling...")
+        summerization_prompt = self.pm.generate_llama_MC_distillation_prompt(question, correct_answers, wrong_answers)
+        # print("summerization_prompt: ", summerization_prompt)
+        summarized_result = self.clean_pipe(summerization_prompt)
+        # print("summarized_result: ", summarized_result)
+        summarized_txt = self.pm.retrieve_llama_general_reponse(summarized_result)
+        # print("summarized_txt: ", summarized_txt)
+        return summarized_txt
+
 
     def generate_answer(self, txt: str, context: str) -> str:
         print("[Local Model] Generating answer...")

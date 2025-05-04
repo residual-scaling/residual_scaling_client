@@ -65,7 +65,7 @@ class PromptManager:
         if len(options) > 0:
             header += " Choose the answer from the options."
         if len(context) > 0:
-            header += " Always use the provided context to answer."
+            header += " Use the provided context to answer."
         header += " Answer the final answer in the end after #### "
 
         prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
@@ -83,4 +83,27 @@ class PromptManager:
     
     def retrieve_llama_percise_answer(self, txt: str) -> str:
         keyword = "####"
+        return clean_string(cut_last_appearance(txt, keyword)).strip()
+
+    def generate_llama_MC_distillation_prompt(self, question: str, correct_answers: list, wrong_answers: list) -> str:
+        correct_answer = ",".join(correct_answers)
+        wrong_answer = ",".join(wrong_answers)
+        prompt = f"""
+            <|begin_of_text|><|start_header_id|>system<|end_header_id|>
+            Condense this input into one sentence containing: 
+            1. The exact question subject 
+            2. Correct answer (if provided)
+            3. Wrong answers (if provided)
+            Use natural language, not in a question and answer way. Do not question the correctness of the answers. Use the given information and do not add any information beyond what is given.<|eot_id|>
+            <|start_header_id|>user<|end_header_id|>
+            Input:
+            Question: "{question}"
+            Correct answer: "{correct_answer}"
+            Wrong answer: "{wrong_answer}"<|eot_id|>
+            <|start_header_id|>assistant<|end_header_id|>
+            """
+        return prompt
+    
+    def retrieve_llama_general_reponse(self, txt: str) -> str:
+        keyword = "<|start_header_id|>assistant<|end_header_id|>"
         return clean_string(cut_last_appearance(txt, keyword)).strip()
