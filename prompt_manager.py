@@ -21,7 +21,7 @@ class PromptManager:
         keyword = "Summary:"
         return clean_string(cut_last_appearance(txt, keyword))
 
-    def generate_llama_generation_prompt(self, query: str, context: list) -> str:
+    def generate_llama_generation_prompt(self, query: str, context: str) -> str:
         if len(context) == 0:
             prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
                     You are a helpful AI assistant.<|eot_id|>
@@ -30,11 +30,10 @@ class PromptManager:
                     <|start_header_id|>assistant<|end_header_id|>"""
         else:
             # there exists some context
-            concated_context = ",".join(context)
             prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
                     You are a helpful AI assistant. Always use the provided context to answer.<|eot_id|>
                     <|start_header_id|>user<|end_header_id|>
-                    Context: "{concated_context}"
+                    Context: "{context}"
 
                     Request: {query}<|eot_id|>
                     <|start_header_id|>assistant<|end_header_id|>"""
@@ -60,7 +59,7 @@ class PromptManager:
             raise ValueError(f"ERROR: in retrieve_llama_classify_question_type() Invalid type: {result_type}. Expected one of {self.fields} or 'others'.")
         return result_type
 
-    def generate_llama_percise_question_prompt(self, query: str, options: list = [], context: list = []) -> str:
+    def generate_llama_percise_question_prompt(self, query: str, options: list, context: str) -> str:
         # create appropriate header
         header = "You are a helpful AI assistant. The final answer should be as short and percise as possible."
         if len(options) > 0:
@@ -75,10 +74,9 @@ class PromptManager:
         
         # cosntruct the prompt
         if len(options) > 0:
-            prompt += f"Options: '{str(options)}'\n"
+            prompt += f"Options: '{str(options)}'\n\n"
         if len(context) > 0:
-            concated_context = ",".join(context)
-            prompt += f"Context: '{concated_context}'\n"
+            prompt += f"Context: '[{context}]'\n\n"
         prompt += f"""Request: {query}<|eot_id|>
                 <|start_header_id|>assistant<|end_header_id|>"""
         return prompt

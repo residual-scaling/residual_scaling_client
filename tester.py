@@ -37,13 +37,10 @@ class Tester:
             log_flush(self.fileIO, f"question: ({self.train_set[i]["question"]}), truth: ({self.train_set[i]["truth"]}), options: ({self.train_set[i]["options"]})")
             self.teacher_model.load_question(self.test_set[i])
             
+            context = ""
             if self.use_experience:
-                question_state = self.teacher_model.get_experience_question_state()
-                log_flush(self.fileIO, f"Experience question state: {str(question_state)}")
-            else:
-                question_state = self.teacher_model.get_plain_question_state()
-                log_flush(self.fileIO, f"Plain question state: {str(question_state)}")
-            student_answer = self.student_model.solve_question(question_state)
+                context = self.teacher_model.get_question_related_experience_context()
+            student_answer = self.student_model.solve_question(self.teacher_model.question, self.teacher_model.options, context)
             is_correct_answer = self.teacher_model.exam_result(student_answer)
             if is_correct_answer:
                 log_flush(self.fileIO, f"Student model answer is CORRECT: {student_answer}.")

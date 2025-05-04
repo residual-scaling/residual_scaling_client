@@ -27,12 +27,23 @@ class TeacherModel:
         field_ind = server_setting["field"].index(subject)
         self.connector = RSDBConnector(server_setting["host"][field_ind], server_setting["port"][field_ind])
 
-        # question setting
+        # fixed question setting
         self.question = None
         self.reasoning = None
         self.truth = None
         self.options = []
-        self.conversation = ""
+
+        # flex conversation setting
+        self.wrong_answers = []
+        self.correct_answers = []  # there should only be one
+        # self.conversation = ""
+        self.try_count = 0
+
+
+    def reset_flex_conversation_setting(self):
+        self.wrong_answers = []
+        self.correct_answers = []
+        # self.conversation = ""
         self.try_count = 0
 
     def load_question(self, question_data: dict):
@@ -48,9 +59,10 @@ class TeacherModel:
         log_flush(self.fileIO, "Reasoning loaded: " + self.reasoning)
         log_flush(self.fileIO, "Truth loaded: " + self.truth)
         log_flush(self.fileIO, "Options loaded: " + str(self.options))
-        self.try_count = 0
         log_flush(self.fileIO, "Conversation cleared and reloaded.")
-        self.conversation = ""
+
+        # reset flex conversation setting
+        self.reset_flex_conversation_setting()
 
     def exam_result(self, answer: str) -> bool:
         """
@@ -59,11 +71,17 @@ class TeacherModel:
         self.try_count += 1
         if answer == self.truth:
             log_flush(self.fileIO, f"Answer ({answer}) is correct.")
-            self.conversation += f" The result of the previous attempt is: '{answer}', and it is the CORRECT answer! "
+            self.correct_answers.append(answer)
+            if len(self.correct_answers) > 1:
+                print("WARNING: in exam_result(), there are more than 1 correct answer")
+                log_flush("WARNING: in exam_result(), there are more than 1 correct answer")
+            # self.conversation += f" The result of the previous attempt is: '{answer}', and it is the CORRECT answer! "
             return True
         else:
+            if answer not in self.wrong_answers:
+                self.wrong_answers.append(answer)
             log_flush(self.fileIO, f"Truth is ({self.truth}), Answer is ({answer}), answer is wrong.")
-            self.conversation += f" The result of the previous attempt is: '{answer}', and it is a WRONG answer! "
+            # self.conversation += f" The result of the previous attempt is: '{answer}', and it is a WRONG answer! "
         return False
 
         
@@ -72,47 +90,27 @@ class TeacherModel:
         Get the full conversation.
         """
         full_conversation = f"Question: '{self.question}', "
-        if len(self.options) > 0:
-            full_conversation += f"Options of answers: {str(self.options)}, "
-        return full_conversation + self.conversation
+        if len(self.correct_answers) > 0:
+            full_conversation += f"CORRECT answer: '{self.correct_answers[0]}', "
+        if len(self.wrong_answers) > 0:
+            full_conversation += f"WRONG answer: '{self.wrong_answers}'. "
+        return full_conversation
     
+    def get_context(self) -> str:
+        if len(self.correct_answers) > 0 or len(self.wrong_answers) > 0:
+            return self.get_full_conversation()
+        return ""
+
     def get_distilled_conversation(self):
         full_conversation = self.get_full_conversation()
         return self.model.generate_distillation(full_conversation)
-    
-    def get_conversation_question_state(self):
-        """
-        Get the new question state.
-        """
-        return {
-            "question": self.question,
-            "options": self.options,
-            "context": [self.conversation]
-        }
 
-    def get_plain_question_state(self):
-        """
-        Get the plain question state.
-        """
-        return {
-            "question": self.question,
-            "options": self.options,
-            "context": []
-        }
-    
-    def get_experience_question_state(self) :
-        return {
-            "question": self.question,
-            "options": self.options,
-            "context": self.get_question_related_contexts(),
-        }
-    
     def save_conversation(self, save_distilled: bool = True):
         """
         Save the conversation to the database.
         """
         to_save_conversation = self.get_full_conversation()
-        log_flush(self.fileIO, f"Full conversation: (){to_save_conversation}")
+        log_flush(self.fileIO, f"Full conversation: ({to_save_conversation})")
         if save_distilled:
             log_flush(self.fileIO, "Distilling")
             to_save_conversation = self.get_distilled_conversation()
@@ -125,10 +123,11 @@ class TeacherModel:
         """
         self.connector.save_db()
 
-    def get_question_related_contexts(self) -> list:
+    def get_question_related_experience_context(self) -> list:
         """
         Get the question related contexts from the database.
         """
         related_contexts = self.connector.get(self.question)
         log_flush(self.fileIO, f"Retrieve from VectorDB, original question: ({self.question}), Related contexts: ({str(related_contexts)})")
-        return related_contexts
+        context = " --- ".join(related_contexts)
+        return context
