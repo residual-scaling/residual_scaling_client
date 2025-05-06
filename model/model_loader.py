@@ -8,4 +8,4 @@ def load_model(model_type: str, model_path: str) -> BaseModel:
     elif model_type == "local":
         return LocalModel(model_path)
     else:
-        raise Exception("In util.py load_model(), model_type is not recognized.")
+        raise Exception(f"In util.py load_model(), model_type ({model_type}) is not recognized.")

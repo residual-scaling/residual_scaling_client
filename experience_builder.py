@@ -8,6 +8,7 @@ import datetime
 
 class ExperienceBuilder:
     def __init__(self, id: str, subject: str, dataset: str, train_percent: float, model_type: str, model_path: str, save_distill_experience: bool = True, save_false_experience: bool = False):
+        print("ExperienceBuilder.__init__()")
         self.id = id
         self.dataset = dataset
         self.max_round = experience_constructor_meta["max_round"]
