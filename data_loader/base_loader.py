@@ -59,4 +59,14 @@ class BaseLoader:
         if n < 0:
             raise ValueError("n must be a positive integer.")
         return self.data[-n:]
+
+    def load_n_offeset(self, n: int, offset: int):
+        if n > self.size:
+            raise ValueError("n is larger than the size of the data.")
+        if n < 0:
+            raise ValueError("n must be a positive integer.")
+        if offset < 0:
+            raise ValueError("offset must be a positive integer.")
+        return self.data[offset:offset + n]
+
     
