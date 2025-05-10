@@ -2,6 +2,7 @@ from data_loader.loader_util import get_dataloader
 from teacher_model import TeacherModel
 from student_model import StudentModel
 from util import log_flush
+from model.model_loader import load_model
 import datetime
 
 
@@ -18,8 +19,9 @@ class Tester:
         self.train_set, self.test_set = self.dataloader.load_train_test_set(train_percent, random_shuffle=False)
 
         # set up teacher and student model
-        self.teacher_model = TeacherModel(subject=subject, model_type=model_type, model_path=model_path)
-        self.student_model = StudentModel(model_type=model_type, model_path=model_path)
+        self.model = load_model(model_type, model_path)
+        self.teacher_model = TeacherModel(subject=subject, model=self.model)
+        self.student_model = StudentModel(model=self.model)
 
         # logger setting
         self.fileIO = open(f"./log/Tester_{self.id}_{self.dataset}.log", 'a')

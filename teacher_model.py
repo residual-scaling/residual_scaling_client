@@ -8,12 +8,11 @@ import datetime
 
 
 class TeacherModel:
-    def __init__(self, subject: str, model_type: str = "local", model_path: str = None):
+    def __init__(self, subject: str, model):
         """
         Teacher model save question to ask and save the conversation(experience).
         """
-        self.model_type = model_type
-        self.model = load_model(model_type, model_path)
+        self.model = model
         
         # logger setting
         self.fileIO = open('./log/teacher_log.txt', 'a')
