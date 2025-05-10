@@ -6,14 +6,14 @@ import datetime
 
 
 class Tester:
-    def __init__(self, id: str, subject: str, dataset: str, train_percent: float, model_type: str, model_path: str, use_experience: bool):
+    def __init__(self, id: str, subject: str, dataset: str, subset: str, train_percent: float, model_type: str, model_path: str, use_experience: bool):
         self.id = id
         self.dataset = dataset
         self.train_percent = train_percent
         self.use_experience = use_experience
 
         # set dataloader
-        self.dataloader = get_dataloader(dataset)
+        self.dataloader = get_dataloader(dataset, subset)
         # set train and test set
         self.train_set, self.test_set = self.dataloader.load_train_test_set(train_percent, random_shuffle=False)
 

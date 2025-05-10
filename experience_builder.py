@@ -7,7 +7,7 @@ import datetime
 
 
 class ExperienceBuilder:
-    def __init__(self, id: str, subject: str, dataset: str, train_percent: float, model_type: str, model_path: str, save_distill_experience: bool = True, save_false_experience: bool = False):
+    def __init__(self, id: str, subject: str, dataset: str, subset: str, train_percent: float, model_type: str, model_path: str, save_distill_experience: bool = True, save_false_experience: bool = False):
         print("ExperienceBuilder.__init__()")
         self.id = id
         self.dataset = dataset
@@ -17,7 +17,7 @@ class ExperienceBuilder:
         self.train_percent = train_percent
 
         # set dataloader
-        self.dataloader = get_dataloader(dataset)
+        self.dataloader = get_dataloader(dataset, subset)
         # set train and test set
         self.train_set, self.test_set = self.dataloader.load_train_test_set(train_percent, random_shuffle=False)
 
