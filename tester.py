@@ -7,7 +7,7 @@ import datetime
 
 
 class Tester:
-    def __init__(self, id: str, subject: str, dataset: str, subset: str, train_percent: float, model_type: str, model_path: str, use_experience: bool):
+    def __init__(self, id: str, subject: str, dataset: str, subset: str, train_percent: float, model, use_experience: bool):
         self.id = id
         self.dataset = dataset
         self.train_percent = train_percent
@@ -19,7 +19,8 @@ class Tester:
         self.train_set, self.test_set = self.dataloader.load_train_test_set(train_percent, random_shuffle=False)
 
         # set up teacher and student model
-        self.model = load_model(model_type, model_path)
+        # self.model = load_model(model_type, model_path)
+        self.model = model
         self.teacher_model = TeacherModel(subject=subject, model=self.model)
         self.student_model = StudentModel(model=self.model)
 
