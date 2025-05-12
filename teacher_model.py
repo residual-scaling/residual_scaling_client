@@ -100,7 +100,7 @@ class TeacherModel:
         return ""
 
     def get_distilled_conversation(self):
-        return self.model.generate_MC_distillation(self.question, self.correct_answers, self.wrong_answers)
+        return self.model.generate_QA_distillation(self.question, self.correct_answers, self.wrong_answers)
 
     def save_conversation(self, save_distilled: bool = True):
         """

@@ -1,5 +1,5 @@
 prompt_hyperparameter = {
-    "max_summarize_len": 2
+    "max_summarize_len": 3
 }
 model_hyperparameter = {
     "temperature": 0.7

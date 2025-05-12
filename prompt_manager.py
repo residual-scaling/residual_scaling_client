@@ -9,7 +9,7 @@ class PromptManager:
 
     def generate_llama_summarize_prompt(self, txt: str) -> str:
         prompt = f"""<|begin_of_text|><|start_header_id|>user<|end_header_id|>
-        Summarize this text in {self.max_summarize_len - 1}-{self.max_summarize_len} concise sentences:
+        Summarize this text in less than {self.max_summarize_len} concise sentences:
 
         {txt}
 
