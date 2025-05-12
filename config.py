@@ -7,7 +7,7 @@ model_hyperparameter = {
 server_setting = {
     "host": ["127.0.0.1", "127.0.0.1", "127.0.0.1"],
     "port": [4001, 4002, 4003],
-    "field": ["math", "science", "biology"],
+    "field": ["law", "science", "biology"],
 }
 experience_constructor_meta = {
     "max_round": 3

@@ -5,12 +5,11 @@ from prompt_manager import PromptManager
 
 
 class StudentModel:
-    def __init__(self, model_type: str, model_path: str):
+    def __init__(self, model):
         """
         Student model solve question, clean and return the data, that's it.
         """
-        self.model_type = model_type
-        self.model = load_model(model_type, model_path)
+        self.model = model
 
         # prompt manager
         self.pm = PromptManager()
