@@ -46,7 +46,7 @@ class LocalModel(BaseModel):
         # print("summerization_prompt: ", summerization_prompt)
         summarized_result = self.clean_pipe(summerization_prompt)
         # print("summarized_result: ", summarized_result)
-        summarized_txt = self.pm.retrieve_llama_general_reponse(summarized_result)
+        summarized_txt = self.pm.retrieve_llama_summarized_content(summarized_result)
         # print("summarized_txt: ", summarized_txt)
         return summarized_txt
 

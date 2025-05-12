@@ -88,9 +88,8 @@ class PromptManager:
     def generate_llama_MC_distillation_prompt(self, question: str, correct_answers: list, wrong_answers: list) -> str:
         correct_answer = ",".join(correct_answers)
         wrong_answer = ",".join(wrong_answers)
-        prompt = f"""
-            <|begin_of_text|><|start_header_id|>system<|end_header_id|>
-            Condense this input into one sentence containing: 
+        prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+            Summary this input into one sentence containing: 
             1. The exact question subject 
             2. Correct answer (if provided)
             3. Wrong answers (if provided)
@@ -101,7 +100,7 @@ class PromptManager:
             Correct answer: "{correct_answer}"
             Wrong answer: "{wrong_answer}"<|eot_id|>
             <|start_header_id|>assistant<|end_header_id|>
-            """
+            Summary:"""
         return prompt
     
     def retrieve_llama_general_reponse(self, txt: str) -> str:
