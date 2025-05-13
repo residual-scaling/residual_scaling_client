@@ -53,8 +53,8 @@ class RSDBConnector:
             return_meta = RSMetaMsg.deserialize(return_meta)
             data = self.client_socket.recv(return_meta.meta_len).decode('utf-8')
             scores, results = self.handle_get_result(data)
-            if len(results) > 0 and results[-1] == '':
-                raise ValueError(f"The last element of result is empty string, results: {results}")
+            # if len(results) > 0 and results[-1] == '':
+            #     raise ValueError(f"The last element of result is empty string, results: {results}")
             if self.get_type == RSGetType.WITHOUT_SCORE:
                 return results
             return scores, results

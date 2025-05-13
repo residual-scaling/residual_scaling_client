@@ -127,8 +127,10 @@ class TeacherModel:
         """
         if self.trace_score:
             # get the context with score
-            scores, related_contexts = self.connector.get(self.question)
-            log_flush(self.fileIO, f"Retrieve from VectorDB, original question: ({self.question}), related scores: ({scores}), related contexts: ({related_contexts})")
+            scores, related_contexts = self.connector.get(" ".join(self.options))
+            log_flush(self.fileIO, f"Retrieve from VectorDB, options: ({" ".join(self.options)}), related scores: ({scores}), related contexts: ({related_contexts})")
+            # scores, related_contexts = self.connector.get(self.question)
+            # log_flush(self.fileIO, f"Retrieve from VectorDB, original question: ({self.question}), related scores: ({scores}), related contexts: ({related_contexts})")
             return scores, related_contexts
         else:
             related_contexts = self.connector.get(self.question)
