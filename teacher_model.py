@@ -8,7 +8,7 @@ import datetime
 
 
 class TeacherModel:
-    def __init__(self, subject: str, model):
+    def __init__(self, subject: str, model, trace_score: bool):
         """
         Teacher model save question to ask and save the conversation(experience).
         """
@@ -24,7 +24,8 @@ class TeacherModel:
             raise ValueError(f"ERROR: In TeacherModel.__init__(), {subject} is not in the server setting!")
         self.subject = subject
         field_ind = server_setting["field"].index(subject)
-        self.connector = RSDBConnector(server_setting["host"][field_ind], server_setting["port"][field_ind])
+        self.trace_score = trace_score
+        self.connector = RSDBConnector(server_setting["host"][field_ind], server_setting["port"][field_ind], self.trace_score)
 
         # fixed question setting
         self.question = None
@@ -124,7 +125,12 @@ class TeacherModel:
         """
         Get the question related contexts from the database.
         """
-        related_contexts = self.connector.get(self.question)
-        log_flush(self.fileIO, f"Retrieve from VectorDB, original question: ({self.question}), Related contexts: ({str(related_contexts)})")
-        context = " --- ".join(related_contexts)
-        return context
+        if self.trace_score:
+            # get the context with score
+            scores, related_contexts = self.connector.get(self.question)
+            log_flush(self.fileIO, f"Retrieve from VectorDB, original question: ({self.question}), related scores: ({scores}), related contexts: ({related_contexts})")
+            return scores, related_contexts
+        else:
+            related_contexts = self.connector.get(self.question)
+            log_flush(self.fileIO, f"Retrieve from VectorDB, original question: ({self.question}), only contexts: ({str(related_contexts)})")
+            return related_contexts

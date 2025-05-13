@@ -6,7 +6,7 @@ import datetime
 
 
 class Tester:
-    def __init__(self, id: str, subject: str, dataset: str, subset:str, train_percent: float, model, use_experience: bool):
+    def __init__(self, id: str, subject: str, dataset: str, subset:str, train_percent: float, model, trace_scores: bool, use_experience: bool):
         self.id = id
         self.dataset = dataset
         self.train_percent = train_percent
@@ -18,7 +18,8 @@ class Tester:
         self.train_set, self.test_set = self.dataloader.load_train_test_set(train_percent, random_shuffle=False)
 
         # set up teacher and student model
-        self.teacher_model = TeacherModel(subject=subject, model=model)
+        self.trace_scores = trace_scores
+        self.teacher_model = TeacherModel(subject=subject, model=model, trace_score=trace_scores)
         self.student_model = StudentModel(model=model)
 
         # logger setting
@@ -37,9 +38,13 @@ class Tester:
             log_flush(self.fileIO, f"question: ({self.train_set[i]["question"]}), truth: ({self.train_set[i]["truth"]}), options: ({self.train_set[i]["options"]})")
             self.teacher_model.load_question(self.test_set[i])
             
-            context = ""
             if self.use_experience:
-                context = self.teacher_model.get_question_related_experience_context()
+                if self.trace_scores:
+                    scores, contexts = self.teacher_model.get_question_related_experience_context()
+                else:
+                    contexts = self.teacher_model.get_question_related_experience_context()
+            # join the context into string
+            context = " --- ".join(contexts)
             student_answer = self.student_model.solve_question(self.teacher_model.question, self.teacher_model.options, context)
             is_correct_answer = self.teacher_model.exam_result(student_answer)
             if is_correct_answer:

@@ -7,7 +7,7 @@ import datetime
 
 
 class ExperienceBuilder:
-    def __init__(self, id: str, subject: str, dataset: str, subset:str, train_percent: float, model, save_distill_experience: bool = True, save_false_experience: bool = False):
+    def __init__(self, id: str, subject: str, dataset: str, subset:str, train_percent: float, model, trace_scores: bool, save_distill_experience: bool = True, save_false_experience: bool = False):
         self.id = id
         self.dataset = dataset
         self.max_round = experience_constructor_meta["max_round"]
@@ -21,7 +21,8 @@ class ExperienceBuilder:
         self.train_set, self.test_set = self.dataloader.load_train_test_set(train_percent, random_shuffle=False)
 
         # set up teacher and student model
-        self.teacher_model = TeacherModel(subject=subject, model=model)
+        self.trace_scores = trace_scores
+        self.teacher_model = TeacherModel(subject=subject, model=model, trace_score=trace_scores)
         self.student_model = StudentModel(model=model)
 
         # logger setting
