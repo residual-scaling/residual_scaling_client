@@ -24,13 +24,10 @@ class RSDBConnector:
     def handle_get_result(self, data: str):
         # split the data by the delimiter
         data = data.split(RSMsgDelimiter.RSJOINBLOCK)
-        scores = []
-        results = []
         # if return only a list with an empty string, this mean db has no qualified result
         if len(data) == 1 and data[0] == '':
-            if self.get_type == RSGetType.WITH_SCORE:
-                return scores, results
-            return results
+            return [], []
+        
         if self.get_type == RSGetType.WITH_SCORE:
             # the first element is the score
             scores = data[0].split(";")
@@ -39,6 +36,7 @@ class RSDBConnector:
             results = data[1:]
         else:
             # all elements are the results
+            scores = []
             results = data
         if self.get_type == RSGetType.WITH_SCORE and  len(results) != len(scores):
             raise ValueError(f"ERROR, In RSDBConnector.handle_get_result() The length of results ({results}) and scores ({scores}) are not equal")
@@ -54,9 +52,6 @@ class RSDBConnector:
             return_meta = self.client_socket.recv(RSMetaMsg.get_size())
             return_meta = RSMetaMsg.deserialize(return_meta)
             data = self.client_socket.recv(return_meta.meta_len).decode('utf-8')
-            # TODO: check the return value
-            scores = []
-            results = []
             scores, results = self.handle_get_result(data)
             if len(results) > 0 and results[-1] == '':
                 raise ValueError(f"The last element of result is empty string, results: {results}")
