@@ -30,7 +30,7 @@ class RSDBConnector:
         
         if self.get_type == RSGetType.WITH_SCORE:
             # the first element is the score
-            scores = data[0].split(";")
+            scores = data[0].split(RSMsgDelimiter.RS_SCORE_SEPERATOR)
             scores = [float(s) for s in scores]
             # the rest are the results
             results = data[1:]
