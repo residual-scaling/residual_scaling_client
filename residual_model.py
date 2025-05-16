@@ -52,7 +52,7 @@ class ResidualModel:
 
     def query_without_residual(self, query: str) -> str:
         print("### Start query_without_residual ### ")
-        result = self.model.generate_answer(query, [])
+        result = self.model.generate_answer(query, "")
         print("### Finish query_without_residual ### ")
         return result
 

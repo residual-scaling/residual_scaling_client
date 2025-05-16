@@ -9,7 +9,7 @@ class PromptManager:
 
     def generate_llama_summarize_prompt(self, txt: str) -> str:
         prompt = f"""<|begin_of_text|><|start_header_id|>user<|end_header_id|>
-        Summarize this text in {self.max_summarize_len - 1}-{self.max_summarize_len} concise sentences:
+        Summarize this text in less than {self.max_summarize_len} concise sentences:
 
         {txt}
 
@@ -21,7 +21,7 @@ class PromptManager:
         keyword = "Summary:"
         return clean_string(cut_last_appearance(txt, keyword))
 
-    def generate_llama_generation_prompt(self, query: str, context: list) -> str:
+    def generate_llama_generation_prompt(self, query: str, context: str) -> str:
         if len(context) == 0:
             prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
                     You are a helpful AI assistant.<|eot_id|>
@@ -30,11 +30,10 @@ class PromptManager:
                     <|start_header_id|>assistant<|end_header_id|>"""
         else:
             # there exists some context
-            concated_context = ",".join(context)
             prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
                     You are a helpful AI assistant. Always use the provided context to answer.<|eot_id|>
                     <|start_header_id|>user<|end_header_id|>
-                    Context: "{concated_context}"
+                    Context: "{context}"
 
                     Request: {query}<|eot_id|>
                     <|start_header_id|>assistant<|end_header_id|>"""
@@ -60,13 +59,13 @@ class PromptManager:
             raise ValueError(f"ERROR: in retrieve_llama_classify_question_type() Invalid type: {result_type}. Expected one of {self.fields} or 'others'.")
         return result_type
 
-    def generate_llama_percise_question_prompt(self, query: str, options: list = [], context: list = []) -> str:
+    def generate_llama_percise_question_prompt(self, query: str, options: list, context: str) -> str:
         # create appropriate header
         header = "You are a helpful AI assistant. The final answer should be as short and percise as possible."
         if len(options) > 0:
             header += " Choose the answer from the options."
         if len(context) > 0:
-            header += " Always use the provided context to answer."
+            header += " Use the provided context to answer."
         header += " Answer the final answer in the end after #### "
 
         prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
@@ -75,14 +74,35 @@ class PromptManager:
         
         # cosntruct the prompt
         if len(options) > 0:
-            prompt += f"Options: '{str(options)}'\n"
+            prompt += f"Options: '{str(options)}'\n\n"
         if len(context) > 0:
-            concated_context = ",".join(context)
-            prompt += f"Context: '{concated_context}'\n"
+            prompt += f"Context: '[{context}]'\n\n"
         prompt += f"""Request: {query}<|eot_id|>
                 <|start_header_id|>assistant<|end_header_id|>"""
         return prompt
     
     def retrieve_llama_percise_answer(self, txt: str) -> str:
         keyword = "####"
+        return clean_string(cut_last_appearance(txt, keyword)).strip()
+
+    def generate_llama_MC_distillation_prompt(self, question: str, correct_answers: list, wrong_answers: list) -> str:
+        correct_answer = ",".join(correct_answers)
+        wrong_answer = ",".join(wrong_answers)
+        prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+            Summary this input into one sentence containing: 
+            1. The exact question subject 
+            2. Correct answer (if provided)
+            3. Wrong answers (if provided)
+            Use natural language, not in a question and answer way. Do not question the correctness of the answers. Use the given information and do not add any information beyond what is given.<|eot_id|>
+            <|start_header_id|>user<|end_header_id|>
+            Input:
+            Question: "{question}"
+            Correct answer: "{correct_answer}"
+            Wrong answer: "{wrong_answer}"<|eot_id|>
+            <|start_header_id|>assistant<|end_header_id|>
+            Summary:"""
+        return prompt
+    
+    def retrieve_llama_general_reponse(self, txt: str) -> str:
+        keyword = "<|start_header_id|>assistant<|end_header_id|>"
         return clean_string(cut_last_appearance(txt, keyword)).strip()

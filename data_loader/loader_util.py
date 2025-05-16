@@ -3,12 +3,12 @@ from data_loader.sciq_loader import SciQLoader
 from data_loader.mmlu_loader import MMLULoader
 
 
-def get_dataloader(dataset: str, subject: str = "high_school_biology"):
+def get_dataloader(dataset: str, subset: str):
     # return dataloader based on the dataset name
     if dataset == "GSM8K":
         return GSM8KLoader()
     elif dataset == "SciQ":
         return SciQLoader()
     elif dataset == "MMLU":
-        return MMLULoader(subject)
+        return MMLULoader(subset)
     raise Exception("In get_dataloader(), dataset is not not detected, should be one of: [GSM8K, SciQ, MMLU]!")

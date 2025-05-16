@@ -5,12 +5,11 @@ from prompt_manager import PromptManager
 
 
 class StudentModel:
-    def __init__(self, model_type: str, model_path: str):
+    def __init__(self, model):
         """
         Student model solve question, clean and return the data, that's it.
         """
-        self.model_type = model_type
-        self.model = load_model(model_type, model_path)
+        self.model = model
 
         # prompt manager
         self.pm = PromptManager()
@@ -20,14 +19,11 @@ class StudentModel:
         log_flush(self.fileIO, "===============================")
         log_flush(self.fileIO, "Start teacher model on " + str(datetime.datetime.now()))
 
-    def solve_question(self, question_data) -> str:
+    def solve_question(self, question: str, options: list, context: str) -> str:
         """
         Solve question with input conversation from the teacher model.
         """
         # gather question data
-        question = question_data["question"]
-        options = question_data["options"]
-        context = question_data["context"]
         log_flush(self.fileIO, "+++++++++++++++++++++++++++++++")
         log_flush(self.fileIO, f"Solve question: {question}, with options: {options} and previous conetxt: '{context}'")
 
@@ -36,6 +32,8 @@ class StudentModel:
         log_flush(self.fileIO, "Prompt: " + prompt)
         # generate result
         result = self.model.clean_pipe(prompt)
+        log_flush(self.fileIO, "-------------")
+        log_flush(self.fileIO, f"Result: {result}")
         # print("result: ", result)
         answer = self.pm.retrieve_llama_percise_answer(result)
         log_flush(self.fileIO, "Answer: " + answer)
@@ -43,12 +41,13 @@ class StudentModel:
     
     def get_percise_answer_basic(self, question: str, options: list) -> str:
         """
+        TODO duplicated, solve_question() with exmpty context act the same.
         Get precise answer with input conversation from the teacher model.
         """
         log_flush(self.fileIO, "+++++++++++++++++++++++++++++++")
         log_flush(self.fileIO, f"Get percise answer WITHOUT residual, question: {question}, with options: {options}")
         # get prompt
-        prompt = self.pm.generate_llama_percise_question_prompt(question, options, [])
+        prompt = self.pm.generate_llama_percise_question_prompt(question, options, "")
         log_flush(self.fileIO, "Prompt: " + prompt)
         # generate result
         result = self.model.clean_pipe(prompt)
