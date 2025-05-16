@@ -53,7 +53,7 @@ class TeacherModel:
         self.question = question_data["question"]
         self.reasoning = question_data["reasoning"]
         self.truth = question_data["truth"]
-        self.options = question_data["options"]
+        self.options = list(question_data["options"])
         log_flush(self.fileIO, "+++++++++++++++++++++++++++++++")
         log_flush(self.fileIO, "Question loaded: " + self.question)
         log_flush(self.fileIO, "Reasoning loaded: " + self.reasoning)
@@ -127,8 +127,14 @@ class TeacherModel:
         """
         if self.trace_score:
             # get the context with score
-            scores, related_contexts = self.connector.get(" ".join(self.options))
-            log_flush(self.fileIO, f"Retrieve from VectorDB, options: ({" ".join(self.options)}), related scores: ({scores}), related contexts: ({related_contexts})")
+            qo = " ".join([self.question] + self.options)
+            # print("len(qo): ", len(qo))
+            # print("type(qo): ", type(qo))
+            # print("qo: ", qo)
+            scores, related_contexts = self.connector.get(qo)
+            log_flush(self.fileIO, f"Retrieve from VectorDB, question + options: ({qo}), related scores: ({scores}), related contexts: ({related_contexts})")
+            # scores, related_contexts = self.connector.get(" ".join(self.options))
+            # log_flush(self.fileIO, f"Retrieve from VectorDB, options: ({" ".join(self.options)}), related scores: ({scores}), related contexts: ({related_contexts})")
             # scores, related_contexts = self.connector.get(self.question)
             # log_flush(self.fileIO, f"Retrieve from VectorDB, original question: ({self.question}), related scores: ({scores}), related contexts: ({related_contexts})")
             return scores, related_contexts
