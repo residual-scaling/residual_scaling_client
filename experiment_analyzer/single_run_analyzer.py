@@ -1,8 +1,8 @@
 import pandas as pd
 
 
-class ExperimentAnalyzer:
-    def __init__(self, row_len: int, ):
+class SingleRunAnalyzer:
+    def __init__(self, row_len: int):
         self.row_len = row_len
         self.df = pd.DataFrame(index=[i for i in range(self.row_len)], 
                         columns=[
@@ -42,4 +42,4 @@ class ExperimentAnalyzer:
         
 
     def save_to_csv(self):
-        self.df.to_csv("./log/experiment_anlysis.csv", encoding='utf-8')
+        self.df.to_csv("./log/single_run_experiment_anlysis.csv", encoding='utf-8')
