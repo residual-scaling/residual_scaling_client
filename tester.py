@@ -2,12 +2,12 @@ from data_loader.loader_util import get_dataloader
 from teacher_model import TeacherModel
 from student_model import StudentModel
 from util import log_flush
-from experiment_analyzer import ExperimentAnalyzer
+from experiment_analyzer.single_run_analyzer import SingleRunAnalyzer
 import datetime
 
 
 class Tester:
-    def __init__(self, id: str, subject: str, dataset: str, subset:str, train_percent: float, model, analyzer: ExperimentAnalyzer, trace_scores: bool, use_experience: bool):
+    def __init__(self, id: str, subject: str, dataset: str, subset:str, train_percent: float, model, analyzer: SingleRunAnalyzer, trace_scores: bool, use_experience: bool):
         self.id = id
         self.dataset = dataset
         self.train_percent = train_percent
@@ -23,6 +23,7 @@ class Tester:
         self.teacher_model = TeacherModel(subject=subject, model=model, trace_score=trace_scores)
         self.student_model = StudentModel(model=model)
 
+        # set up analyzer
         self.analyzer = analyzer
 
         # logger setting

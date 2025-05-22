@@ -74,7 +74,7 @@ class TeacherModel:
             self.correct_answers.append(answer)
             if len(self.correct_answers) > 1:
                 print("WARNING: in exam_result(), there are more than 1 correct answer")
-                log_flush("WARNING: in exam_result(), there are more than 1 correct answer")
+                log_flush(self.fileIO, "WARNING: in exam_result(), there are more than 1 correct answer")
             # self.conversation += f" The result of the previous attempt is: '{answer}', and it is the CORRECT answer! "
             return True
         else:

@@ -17,6 +17,9 @@ class BaseLoader:
 
     def load_data(self):
         return self.data
+
+    def get_size(self):
+        return self.size
     
     def load_data_percent(self, percent: float):
         if self.data is None:

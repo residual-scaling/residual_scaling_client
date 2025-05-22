@@ -52,8 +52,8 @@ class LocalModel(BaseModel):
         log_flush(self.fileIO, f"Input question: {question}; correct answers: {correct_answers}; wrong answers: {wrong_answers}")
         qa_txt = f"{question} "
         if len(correct_answers) > 0:
-            if len(correct_answers) > 1:
-                raise ValueError(f"ERROR: in generate_QA_distillation() more than 1 correct answers: {question}, correct answers: {correct_answers}, wrong answers: {wrong_answers}.")
+            # if len(correct_answers) > 1:
+            #     raise ValueError(f"ERROR: in generate_QA_distillation() more than 1 correct answers: {question}, correct answers: {correct_answers}, wrong answers: {wrong_answers}.")
             qa_txt += f"The answer is '{correct_answers[0]}'"
         elif len(wrong_answers) > 0:
             wrong_ans_str = " or ".join([f"'{w_ans}'" for w_ans in wrong_answers])
