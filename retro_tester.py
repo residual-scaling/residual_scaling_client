@@ -9,11 +9,14 @@ import random
 
 
 class RetroTester:
-    def __init__(self, id: str, subject: str, dataset: str, subset:str, test_amount: int, round_amount: int, model, analyzer: RetrospectAnalyzer, trace_scores: bool, use_experience: bool, save_distill_experience: bool):
+    def __init__(self, id: str, subject: str, dataset: str, subset:str, test_amount: int, round_amount: int, model, analyzer: RetrospectAnalyzer, trace_scores: bool, use_experience: bool, save_experience: bool, save_distill_experience: bool):
         self.id = id
         self.dataset = dataset
         self.use_experience = use_experience
+        self.save_experience = save_experience
         self.save_distill_experience = save_distill_experience
+        if not self.use_experience:
+            assert not self.save_experience, "If not using experience, shall not save experience."
 
         # logger setting
         self.fileIO = open(f"./log/retrotester_{self.id}_{self.dataset}.log", 'a')
@@ -59,14 +62,14 @@ class RetroTester:
             self.analyzer.load_question(j, self.teacher_model.question, self.teacher_model.truth, self.round_amount)
             # start the rounds
             accurate_count = 0
+            contexts = []
+            if self.use_experience:
+                if self.trace_scores:
+                    scores, contexts = self.teacher_model.get_question_related_experience_context()
+                else:
+                    scores = []
+                    contexts = self.teacher_model.get_question_related_experience_context()
             for _ in range(self.round_amount):
-                contexts = []
-                if self.use_experience:
-                    if self.trace_scores:
-                        scores, contexts = self.teacher_model.get_question_related_experience_context()
-                    else:
-                        scores = []
-                        contexts = self.teacher_model.get_question_related_experience_context()
                 # join the context into string
                 context = " --- ".join(contexts)
                 student_answer = self.student_model.solve_question(self.teacher_model.question, self.teacher_model.options, context)
@@ -77,7 +80,8 @@ class RetroTester:
                 else:
                     log_flush(self.fileIO, f"Student model answer is WRONG: {student_answer} ")
                 # save the experience
-            self.teacher_model.save_conversation(self.save_distill_experience)
+            if self.save_experience:
+                self.teacher_model.save_conversation(self.save_distill_experience)
             # write to analyzer
             if self.use_experience:
                 log_flush(self.fileIO, f"Test on datapoint {i + 1}/{n} on question {j}/ finished. Experience accurate count: {accurate_count}/{self.round_amount}.")
