@@ -9,7 +9,7 @@ import random
 
 
 class RetroTester:
-    def __init__(self, id: str, subject: str, dataset: str, subset:str, test_amount: int, round_amount: int, model, analyzer: RetrospectAnalyzer, trace_scores: bool, use_experience: bool, save_experience: bool, save_distill_experience: bool):
+    def __init__(self, id: str, subject: str, dataset: str, subset:str, test_amount: int, round_amount: int, model, analyzer: RetrospectAnalyzer, trace_scores: bool, use_experience: bool, save_experience: bool, save_distill_experience: bool = True):
         self.id = id
         self.dataset = dataset
         self.use_experience = use_experience

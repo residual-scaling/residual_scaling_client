@@ -109,11 +109,19 @@ class TeacherModel:
         """
         to_save_conversation = self.get_full_conversation()
         log_flush(self.fileIO, f"Full conversation: ({to_save_conversation})")
-        if save_distilled:
-            log_flush(self.fileIO, "Distilling")
+        if not save_distilled:
+            log_flush(self.fileIO, f"save normal conversation {to_save_conversation}")
+            self.connector.put(to_save_conversation)
+            return
+        log_flush(self.fileIO, "Distilling")
+        for _ in range(3):
             to_save_conversation = self.get_distilled_conversation()
-        log_flush(self.fileIO, "Conversation to save: " + to_save_conversation)
-        self.connector.put(to_save_conversation)
+            if len(to_save_conversation) > 0:
+                log_flush(self.fileIO, f"Distillation result, Conversation to save: ({to_save_conversation})")
+                self.connector.put(to_save_conversation)
+                return
+        log_flush(self.fileIO, f"WARNING: in save_conversation(), distillation failed for 3 times, conversation: ({to_save_conversation})")
+        # raise ValueError(f"ERROR: in save_conversation(), distillation failed for 3 times, conversation: ({to_save_conversation})")
 
     def save_experience_db(self):
         """
