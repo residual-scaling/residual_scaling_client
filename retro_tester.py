@@ -45,7 +45,7 @@ class RetroTester:
         n: number of testing in this round
         is_random: whether to random test
         """
-        log_flush(self.fileIO, f"Start testing with test set with size({self.test_amount}) ...")
+        log_flush(self.fileIO, f"Start testing with test set with size({self.test_amount}) at time ({str(datetime.datetime.now())}) ...")
         for i in range(n):
             j = i
             if j >= self.test_amount:
@@ -59,7 +59,7 @@ class RetroTester:
             log_flush(self.fileIO, f"question: ({cur_question["question"]}), truth: ({cur_question["truth"]}), options: ({cur_question["options"]})")
             # set up teacher and student model for the question
             self.teacher_model.load_question(cur_question)
-            self.analyzer.load_question(j, self.teacher_model.question, self.teacher_model.truth, self.round_amount)
+            self.analyzer.load_question(j, self.teacher_model.question, self.teacher_model.clean_truth, self.round_amount)
             # start the rounds
             accurate_count = 0
             contexts = []
@@ -69,10 +69,11 @@ class RetroTester:
                 else:
                     scores = []
                     contexts = self.teacher_model.get_question_related_experience_context()
+            log_flush(self.fileIO, f"contexts: {contexts}")
             for _ in range(self.round_amount):
                 # join the context into string
                 context = " --- ".join(contexts)
-                student_answer = self.student_model.solve_question(self.teacher_model.question, self.teacher_model.options, context)
+                student_answer = self.student_model.solve_question(self.teacher_model.question, self.teacher_model.plain_options, context)
                 is_correct_answer = self.teacher_model.exam_result(student_answer)
                 if is_correct_answer:
                     log_flush(self.fileIO, f"Student model answer is CORRECT: {student_answer}.")

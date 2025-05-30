@@ -41,7 +41,7 @@ class Tester:
             print(f"+++ on test datapoint {i + 1}/{test_size} ...")
             log_flush(self.fileIO, f"question: ({self.train_set[i]["question"]}), truth: ({self.train_set[i]["truth"]}), options: ({self.train_set[i]["options"]})")
             self.teacher_model.load_question(self.test_set[i])
-            self.analyzer.load_question(i, self.teacher_model.question, self.teacher_model.truth)
+            self.analyzer.load_question(i, self.teacher_model.question, self.teacher_model.clean_truth)
             
             contexts = []
             if self.use_experience:

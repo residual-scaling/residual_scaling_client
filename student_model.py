@@ -29,7 +29,7 @@ class StudentModel:
 
         # get prompt
         prompt = self.pm.generate_llama_percise_question_prompt(question, options, context)
-        log_flush(self.fileIO, "Prompt: " + prompt)
+        # log_flush(self.fileIO, "Prompt: " + prompt)
         # generate result
         result = self.model.clean_pipe(prompt)
         log_flush(self.fileIO, "-------------")

@@ -3,7 +3,7 @@ import time
 from model.model_loader import load_model
 from rsdb_connector import RSDBConnector
 from config import server_setting
-from util import log_flush
+from util import log_flush, clean_str
 import datetime
 
 
@@ -30,8 +30,8 @@ class TeacherModel:
         # fixed question setting
         self.question = None
         self.reasoning = None
-        self.truth = None
-        self.options = []
+        self.clean_truth = None
+        self.clean_options = []
 
         # flex conversation setting
         self.wrong_answers = []
@@ -52,36 +52,37 @@ class TeacherModel:
         """
         self.question = question_data["question"]
         self.reasoning = question_data["reasoning"]
-        self.truth = question_data["truth"]
-        self.options = list(question_data["options"])
+        self.clean_truth = clean_str(question_data["truth"])
+        self.plain_options = list(question_data["options"])
+        self.clean_options = []
+        for i in range(len(self.plain_options)):
+            self.clean_options.append(clean_str(self.plain_options[i]))
         log_flush(self.fileIO, "+++++++++++++++++++++++++++++++")
         log_flush(self.fileIO, "Question loaded: " + self.question)
         log_flush(self.fileIO, "Reasoning loaded: " + self.reasoning)
-        log_flush(self.fileIO, "Truth loaded: " + self.truth)
-        log_flush(self.fileIO, "Options loaded: " + str(self.options))
+        log_flush(self.fileIO, "Clean Truth loaded: " + self.clean_truth)
+        log_flush(self.fileIO, "Clean Options loaded: " + str(self.clean_options))
         log_flush(self.fileIO, "Conversation cleared and reloaded.")
 
         # reset flex conversation setting
         self.reset_flex_conversation_setting()
 
-    def exam_result(self, answer: str) -> bool:
+    def exam_result(self, student_answer: str) -> bool:
         """
         Save the exam answer to the conversation.
         """
         self.try_count += 1
-        if answer == self.truth:
-            log_flush(self.fileIO, f"Answer ({answer}) is correct.")
-            self.correct_answers.append(answer)
+        clean_answer = clean_str(student_answer)
+        if clean_answer == self.clean_truth:
+            log_flush(self.fileIO, f"Answer ({clean_answer}) is correct.")
+            self.correct_answers.append(clean_answer)
             if len(self.correct_answers) > 1:
-                print("WARNING: in exam_result(), there are more than 1 correct answer")
                 log_flush(self.fileIO, "WARNING: in exam_result(), there are more than 1 correct answer")
-            # self.conversation += f" The result of the previous attempt is: '{answer}', and it is the CORRECT answer! "
             return True
         else:
-            if answer not in self.wrong_answers:
-                self.wrong_answers.append(answer)
-            log_flush(self.fileIO, f"Truth is ({self.truth}), Answer is ({answer}), answer is wrong.")
-            # self.conversation += f" The result of the previous attempt is: '{answer}', and it is a WRONG answer! "
+            if clean_answer not in self.wrong_answers:
+                self.wrong_answers.append(clean_answer)
+            log_flush(self.fileIO, f"Clean Truth is ({self.clean_truth}), Answer is ({clean_answer}), answer is wrong.")
         return False
         
     def get_full_conversation(self):
@@ -135,12 +136,14 @@ class TeacherModel:
         """
         if self.trace_score:
             # get the context with score
-            qo = " ".join([self.question] + self.options)
-            # print("len(qo): ", len(qo))
-            # print("type(qo): ", type(qo))
-            # print("qo: ", qo)
+            qo = " ".join([self.question] + self.clean_options)
+            print("len(qo): ", len(qo))
+            print("type(qo): ", type(qo))
+            print(f"self.question: ({self.question})")
+            print(f"self.clean_options: ({self.clean_options})")
+            print("qo: ", qo)
             scores, related_contexts = self.connector.get(qo)
-            log_flush(self.fileIO, f"Retrieve from VectorDB, question + options: ({qo}), related scores: ({scores}), related contexts: ({related_contexts})")
+            log_flush(self.fileIO, f"Retrieve from VectorDB, question + clean_options: ({qo}), related scores: ({scores}), related contexts: ({related_contexts})")
             # scores, related_contexts = self.connector.get(" ".join(self.options))
             # log_flush(self.fileIO, f"Retrieve from VectorDB, options: ({" ".join(self.options)}), related scores: ({scores}), related contexts: ({related_contexts})")
             # scores, related_contexts = self.connector.get(self.question)
