@@ -1,4 +1,3 @@
-
 import re
 
 
@@ -42,3 +41,9 @@ def log_flush(fileIO, txt: str):
 
 def get_generated_text(generation_result) -> str:
     return generation_result[0]['generated_text']
+
+
+def clean_str(txt: str) -> str:
+    txt = txt.lower()
+    cleaned = re.sub(r'[^a-z0-9 ]', '', txt)
+    return cleaned
