@@ -18,6 +18,15 @@ def cut_last_appearance(txt: str, keyword: str) -> str:
     result = txt[result_start:].strip()
     return result
 
+def cut_last_appearance_beforewards(txt: str, keyword: str) -> str:
+    """
+    Cut the txt after the last appearance of the keyword.
+    """
+    result_start = txt.rfind(keyword)
+    if result_start < 0:
+        raise Exception("In retrieve_llama_summarized_content(), there should be a keyword but there isn't")
+    result = txt[:result_start].strip()
+    return result
 
 def save_utial_last_appearance(txt: str, keyword: str) -> str:
     """

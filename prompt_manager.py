@@ -1,5 +1,5 @@
 from config import prompt_hyperparameter, server_setting
-from util import cut_last_appearance, clean_string
+from util import cut_last_appearance, cut_last_appearance_beforewards, clean_string
 
 
 class PromptManager:
@@ -106,3 +106,43 @@ class PromptManager:
     def retrieve_llama_general_reponse(self, txt: str) -> str:
         keyword = "<|start_header_id|>assistant<|end_header_id|>"
         return clean_string(cut_last_appearance(txt, keyword)).strip()
+
+    def generate_llama_percise_confidence_prompt(self, query: str, target_option: str, options: list, context: str) -> str:
+        # create appropriate header
+        header = "You are a helpful AI assistant. The final answer should be as short and percise as possible."
+        if len(options) > 0:
+            header += " Choose the answer from the options."
+        if len(context) > 0:
+            header += " Use the provided context to answer."
+        header += " Answer the final answer in the end after #### "
+
+        prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+                {header}<|eot_id|>
+                <|start_header_id|>user<|end_header_id|>\n"""
+        
+        # cosntruct the prompt
+        if len(options) > 0:
+            prompt += f"Options: '{str(options)}'\n\n"
+        if len(context) > 0:
+            prompt += f"Context: '[{context}]'\n\n"
+        prompt += f"""Request: What is your confidence that '{target_option}' is correct answer to question: {query}<|eot_id|>
+                <|start_header_id|>assistant<|end_header_id|>"""
+        return prompt
+    
+    def retrieve_llama_percise_confidence(self, txt: str) -> str:
+        keyword = "####"
+        result = cut_last_appearance(txt, keyword).strip()
+        if "%" in result:
+            result = cut_last_appearance_beforewards(result, "%").strip()
+        if "\n" in result:
+            result = cut_last_appearance_beforewards(result, "\n").strip()
+        result = clean_string(result).strip()
+        print(f"Final result: {result}")
+        if result.isnumeric():
+            confidence = int(result)
+            if confidence < 0 or confidence > 100:
+                print(f"ERROR: in retrieve_llama_percise_confidence() Invalid confidence: {confidence}. Expected in range [0, 100].")
+                return -1
+            return confidence
+        else:
+            return -1

@@ -43,7 +43,7 @@ class ExperienceBuilder:
             is_correct_answer = False
             for j in range(self.max_round):
                 log_flush(self.fileIO, f"try {j + 1}/{self.max_round} ...")
-                student_answer = self.student_model.solve_question(self.teacher_model.question, self.teacher_model.clear_options, self.teacher_model.get_context())
+                student_answer = self.student_model.solve_question(self.teacher_model.question, self.teacher_model.clean_options, self.teacher_model.get_context())
                 is_correct_answer = self.teacher_model.exam_result(student_answer)
                 if is_correct_answer:
                     log_flush(self.fileIO, f"Student model answer is CORRECT: {student_answer} on try {j + 1}.")
