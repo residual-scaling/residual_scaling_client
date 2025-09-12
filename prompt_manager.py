@@ -129,7 +129,7 @@ class PromptManager:
                 <|start_header_id|>assistant<|end_header_id|>"""
         return prompt
     
-    def retrieve_llama_percise_confidence(self, txt: str) -> str:
+    def retrieve_llama_percise_confidence(self, txt: str) -> (bool, str):
         keyword = "####"
         result = cut_last_appearance(txt, keyword).strip()
         if "%" in result:
@@ -142,7 +142,7 @@ class PromptManager:
             confidence = int(result)
             if confidence < 0 or confidence > 100:
                 print(f"ERROR: in retrieve_llama_percise_confidence() Invalid confidence: {confidence}. Expected in range [0, 100].")
-                return -1
-            return confidence
+                return False, confidence
+            return True, confidence
         else:
-            return -1
+            return False, result

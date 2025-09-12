@@ -23,6 +23,10 @@ class RetroTester:
         log_flush(self.fileIO, "===============================")
         log_flush(self.fileIO, f"Initialize retro tester id({self.id}) on dataset({self.dataset}) " + str(datetime.datetime.now()))
 
+        self.confidenceIO = open(f"./log/retrotester_confidence_{self.id}_{self.dataset}.log", 'a')
+        log_flush(self.confidenceIO, "===============================")
+        log_flush(self.confidenceIO, f"Initialize retro tester id({self.id}) on dataset({self.dataset}) " + str(datetime.datetime.now()))
+
         # load data
         self.dataloader = get_dataloader(dataset, subset)
         self.test_amount = test_amount
@@ -46,6 +50,12 @@ class RetroTester:
         is_random: whether to random test
         """
         log_flush(self.fileIO, f"Start testing with test set with size({self.test_amount}) at time ({str(datetime.datetime.now())}) ...")
+        total_confidence = 0
+        total_count = 0
+        right_confidence = 0
+        right_count = 0
+        wrong_confidence = 0
+        wrong_count = 0
         for i in range(n):
             j = i
             if j >= self.test_amount:
@@ -74,7 +84,22 @@ class RetroTester:
                 # join the context into string
                 context = " --- ".join(contexts)
                 student_answer = self.student_model.solve_question(self.teacher_model.question, self.teacher_model.plain_options, context)
+                # confidence
+                isValidConfidence, confidence = self.student_model.get_option_confidence(self.teacher_model.question, student_answer, self.teacher_model.plain_options, context)
                 is_correct_answer = self.teacher_model.exam_result(student_answer)
+                if isValidConfidence:
+                    log_flush(self.confidenceIO, f"Test datapoint {i + 1}/{n} on question {j}, student answer: {student_answer}, correct: {is_correct_answer}, confidence: {confidence}")
+                else:
+                    log_flush(self.confidenceIO, f"Test datapoint {i + 1}/{n} on question {j}, student answer: {student_answer}, correct: {is_correct_answer}, INVALID confidence: {confidence}")
+                if isValidConfidence:
+                    if is_correct_answer:
+                        right_confidence += confidence
+                        right_count += 1
+                    else:
+                        wrong_confidence += confidence
+                        wrong_count += 1
+                    total_confidence += confidence
+                    total_count += 1
                 if is_correct_answer:
                     log_flush(self.fileIO, f"Student model answer is CORRECT: {student_answer}.")
                     accurate_count += 1
@@ -90,4 +115,8 @@ class RetroTester:
             else:
                 log_flush(self.fileIO, f"Test on datapoint {i + 1}/{n} on question {j}/ finished. Plain accurate count: {accurate_count}/{self.round_amount}.")
                 self.analyzer.load_plain_result(j, accurate_count)
+        avg_confidence = total_confidence / total_count if total_count > 0 else 0
+        avg_right_confidence = 0 if right_count == 0 else right_confidence / right_count
+        avg_wrong_confidence = 0 if wrong_count == 0 else wrong_confidence / wrong_count
+        log_flush(self.confidenceIO, f"Average confidence over all rounds: {avg_confidence}, average confidence on right answers: {avg_right_confidence}, average confidence on wrong answers: {avg_wrong_confidence}")
         self.analyzer.save_to_csv()

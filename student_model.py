@@ -55,3 +55,22 @@ class StudentModel:
         answer = self.pm.retrieve_llama_percise_answer(result)
         log_flush(self.fileIO, "Answer: " + answer)
         return answer
+
+    def get_option_confidence(self, question: str, target_option: str, options: list, context: str) -> (bool, str):
+        """
+        Solve question with input conversation from the teacher model.
+        """
+        # gather question data
+        log_flush(self.fileIO, "+++++++++++++++++++++++++++++++")
+        log_flush(self.fileIO, f"Get confidence for option: {target_option}, question: {question}, with options: {options} and previous conetxt: '{context}'")
+
+        # get prompt
+        prompt = self.pm.generate_llama_percise_confidence_prompt(question, target_option, options, context)
+        # log_flush(self.fileIO, "Prompt: " + prompt)
+        # generate result
+        result = self.model.clean_pipe(prompt)
+        log_flush(self.fileIO, "-------------")
+        log_flush(self.fileIO, f"Result: {result}")
+        # print("result: ", result)
+        answer = self.pm.retrieve_llama_percise_confidence(result)
+        return answer
