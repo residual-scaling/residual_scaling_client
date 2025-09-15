@@ -23,7 +23,8 @@ class RetroTester:
         log_flush(self.fileIO, "===============================")
         log_flush(self.fileIO, f"Initialize retro tester id({self.id}) on dataset({self.dataset}) " + str(datetime.datetime.now()))
 
-        if test_confidence:
+        self.test_confidence = test_confidence
+        if self.test_confidence:
             self.confidenceIO = open(f"./log/retrotester_confidence_{self.id}_{self.dataset}.log", 'a')
             log_flush(self.confidenceIO, "===============================")
             log_flush(self.confidenceIO, f"Initialize retro tester id({self.id}) on dataset({self.dataset}) " + str(datetime.datetime.now()))
@@ -87,7 +88,7 @@ class RetroTester:
                 student_answer = self.student_model.solve_question(self.teacher_model.question, self.teacher_model.plain_options, context)
                 # confidence
                 is_correct_answer = self.teacher_model.exam_result(student_answer)
-                if test_confidence:
+                if self.test_confidence:
                     isValidConfidence, confidence = self.student_model.get_option_confidence(self.teacher_model.question, student_answer, self.teacher_model.plain_options, context)
                     if isValidConfidence:
                         log_flush(self.confidenceIO, f"Test datapoint {i + 1}/{n} on question {j}, student answer: {student_answer}, correct: {is_correct_answer}, confidence: {confidence}")
@@ -117,7 +118,7 @@ class RetroTester:
             else:
                 log_flush(self.fileIO, f"Test on datapoint {i + 1}/{n} on question {j}/ finished. Plain accurate count: {accurate_count}/{self.round_amount}.")
                 self.analyzer.load_plain_result(j, accurate_count)
-        if test_confidence:
+        if self.test_confidence:
             avg_confidence = total_confidence / total_count if total_count > 0 else 0
             avg_right_confidence = 0 if right_count == 0 else right_confidence / right_count
             avg_wrong_confidence = 0 if wrong_count == 0 else wrong_confidence / wrong_count
