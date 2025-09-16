@@ -5,9 +5,9 @@ model_hyperparameter = {
     "temperature": 0.7
 }
 server_setting = {
-    "host": ["127.0.0.1", "127.0.0.1", "127.0.0.1"],
-    "port": [4001, 4002, 4003],
-    "field": ["law", "geography", "biology"],
+    "host": ["127.0.0.1", "127.0.0.1", "127.0.0.1", "127.0.0.1", "127.0.0.1", "127.0.0.1"],
+    "port": [4001, 4002, 4003, 4004, 4005, 4006],
+    "field": ["anatomy", "human_sexuality", "jurisprudence", "management", "public_relations", "us_foreign_policy"],
 }
 experience_constructor_meta = {
     "max_round": 3

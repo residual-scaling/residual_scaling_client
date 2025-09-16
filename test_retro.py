@@ -12,10 +12,10 @@ model_path = "/home/xingkun/nmi-experience_scaling/Meta-Llama-3-8B-Instruct"
 model = load_model("local", model_path)
 
 # hyper parameter
-subject = "biology"
+subject = "anatomy"
 dataset="MMLU"
-subset = "high_school_biology"
-round_amount = 50000
+subset = "anatomy"
+test_round_amount = 100
 
 ds = get_dataloader(dataset, subset)
 
@@ -40,7 +40,7 @@ rt = RetroTester(
     save_distill_experience=True
 )
 
-for i in range(round_amount):
+for i in range(test_round_amount):
     print(i)
     rt.start(test_amount)
     rt.teacher_model.save_experience_db()
