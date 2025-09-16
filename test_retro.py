@@ -8,7 +8,7 @@ from experiment_analyzer.retrospect_analyzer import RetrospectAnalyzer
 from retro_tester import RetroTester
 from data_loader.loader_util import get_dataloader
 
-model_path = "/root/autodl-tmp/Meta-Llama-3-8B-Instruct"
+model_path = "/home/xingkun/nmi-experience_scaling/Meta-Llama-3-8B-Instruct"
 model = load_model("local", model_path)
 
 # hyper parameter
@@ -18,6 +18,11 @@ subset = "high_school_biology"
 round_amount = 50000
 
 ds = get_dataloader(dataset, subset)
+
+ds_size = ds.get_size()
+print(ds.get_size())
+test_amount=ds_size 
+
 analyzer = RetrospectAnalyzer(ds.get_size())
 
 rt = RetroTester(

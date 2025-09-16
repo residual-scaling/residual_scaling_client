@@ -13,17 +13,17 @@ experience_constructor_meta = {
     "max_round": 3
 }
 model_path = {
-    "llama3": "/root/autodl-tmp/Meta-Llama-3-8B-Instruct"
+    "llama3": "/home/xingkun/nmi-experience_scaling/Meta-Llama-3-8B-Instruct"
 }
 data_path = {
-    "gsm8k": "/root/autodl-tmp/grade-school-math/grade_school_math/data/",
-    "sciq": "/root/autodl-tmp/sciq/data/",
-    "mmlu": "/root/autodl-tmp/mmlu/",
-    # "aqua": "/root/autodl-tmp/aqua.json",
-    # "strategyqa": "/root/autodl-tmp/strategyqa.json",
-    # "svamp": "/root/autodl-tmp/svamp.json",
-    # "multihopqa": "/root/autodl-tmp/multihopqa.json",
-    # "mathqa": "/root/autodl-tmp/mathqa.json",
-    # "hiddentask": "/root/autodl-tmp/hiddentask.json",
-    # "mmlucas": "/root/autodl-tmp/mmlucas.json",
+    "gsm8k": "/home/xingkun/nmi-experience_scaling/grade-school-math/grade_school_math/data/",
+    "sciq": "/home/xingkun/nmi-experience_scaling/sciq/data/",
+    "mmlu": "/home/xingkun/nmi-experience_scaling/mmlu/",
+    # "aqua": "/home/xingkun/nmi-experience_scaling/aqua.json",
+    # "strategyqa": "/home/xingkun/nmi-experience_scaling/strategyqa.json",
+    # "svamp": "/home/xingkun/nmi-experience_scaling/svamp.json",
+    # "multihopqa": "/home/xingkun/nmi-experience_scaling/multihopqa.json",
+    # "mathqa": "/home/xingkun/nmi-experience_scaling/mathqa.json",
+    # "hiddentask": "/home/xingkun/nmi-experience_scaling/hiddentask.json",
+    # "mmlucas": "/home/xingkun/nmi-experience_scaling/mmlucas.json",
 }
